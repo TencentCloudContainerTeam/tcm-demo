@@ -1,0 +1,23 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# IDE config files
+.idea
+.idea/*
+.vscode/*
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.swp
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+tmp/*
+
