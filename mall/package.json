@@ -1,0 +1,18 @@
+{
+  "name": "mall",
+  "version": "1.0.0",
+  "main": "mall.js",
+  "scripts": {
+    "start": "node mall.js"
+  },
+  "author": "tcm",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.7.0",
+    "request": "^2.88.0"
+  },
+  "engines": {
+    "node": ">=8.11.0",
+    "npm": ">=5.6.0"
+  }
+}
