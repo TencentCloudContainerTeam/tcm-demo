@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jason
+  labels:
+    istio-injection: enabled
+spec:
+  finalizers:
+    - kubernetes
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: discount
+    version: v2
+  name: discount-v2
+  namespace: jason
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discount
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: discount
+        version: v2
+    spec:
+      containers:
+        - image: tcmdemo/discount:v2
+          imagePullPolicy: Always
+          name: discount
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: discount
+  name: discount
+  namespace: jason
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: discount
+  type: ClusterIP
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: discount
+  namespace: jason
+spec:
+  hosts:
+    - "discount.base.svc.cluster.local"
+  http:
+    - match:
+        - headers:
+            cookie:
+              exact: "user=jason"
+      route:
+        - destination:
+            host: discount.jason.svc.cluster.local
+            #subset: v1 # todo
+            port:
+              number: 7000
+    - route: # 不能省略todo
+        - destination:
+            host: discount.base.svc.cluster.local
+            #subset: v1 # todo
+            port:
+              number: 7000
+
+---

@@ -1,0 +1,243 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: base
+  labels:
+    istio-injection: enabled
+spec:
+  finalizers:
+    - kubernetes
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: scores
+    version: v1
+  name: scores-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scores
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: scores
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/scores:v1
+          imagePullPolicy: Always
+          name: scores
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: scores
+  name: scores
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: scores
+  type: ClusterIP
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: recommend
+    version: v1
+  name: recommend-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recommend
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: recommend
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/recommend:v1
+          imagePullPolicy: Always
+          name: recommend
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: recommend
+  name: recommend
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: recommend
+  type: ClusterIP
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: products
+    version: v1
+  name: products-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: products
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: products
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/products:v1
+          imagePullPolicy: Always
+          name: products
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: products
+  name: products
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: products
+  type: ClusterIP
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: discount
+    version: v1
+  name: discount-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discount
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: discount
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/discount:v1
+          imagePullPolicy: Always
+          name: discount
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: discount
+  name: discount
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: discount
+  type: ClusterIP
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: mall
+    version: v1
+  name: mall-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mall
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: mall
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/mall:v1
+          imagePullPolicy: Always
+          name: mall
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mall
+  name: mall
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: mall
+  type: ClusterIP

@@ -1,7 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
 import json
-import cgi
 
 class Server(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -9,7 +8,6 @@ class Server(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
 
-    # GET sends back a Hello world message
     def do_GET(self):
         parsed_path = urlparse(self.path)
         if parsed_path.path != '/scores':
@@ -25,6 +23,7 @@ class Server(BaseHTTPRequestHandler):
             self.send_error(400, "parameter ids is required")
             return
 
+        print('getting scores of ids:', params["ids"])
         ids = params["ids"].split(",")
         scores = {}
         for id in ids:
@@ -41,33 +40,28 @@ class Server(BaseHTTPRequestHandler):
 
 def get_score(id):
     mock_DB = {
-        1: 98,
-        2: 100,
-        3: 97,
-        4: 95,
-        5: 99,
-        6: 100,
-        7: 98,
-        8: 93,
-        9: 94,
-        10: 100,
-        11: 89,
-        12: 92,
-        13: 96,
-        14: 99,
-        15: 98,
-        16: 100,
-        17: 91,
-        18: 99,
-        19: 98,
-        20: 100
+        1: 9.8,
+        2: 10,
+        3: 9.7,
+        4: 9.5,
+        5: 9.9,
+        6: 10,
+        7: 9.8,
+        8: 9.3,
+        9: 9.4,
+        10: 10,
+        11: 8.9,
+        12: 9.2,
+        13: 9.6,
+        14: 8.2,
     }
 
     if id in mock_DB:
-        return '%d%%' % mock_DB[id]
+        #return mock_DB[id] # v1
+        return mock_DB[id] * 10 #v2
     return ''
 
-def run(server_class=HTTPServer, handler_class=Server, port=9000):
+def run(server_class=HTTPServer, handler_class=Server, port=7000):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
 
@@ -75,9 +69,4 @@ def run(server_class=HTTPServer, handler_class=Server, port=9000):
     httpd.serve_forever()
 
 if __name__ == "__main__":
-    from sys import argv
-
-    if len(argv) == 2:
-        run(port=int(argv[1]))
-    else:
-        run()
+    run()
