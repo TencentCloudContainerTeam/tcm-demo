@@ -14,9 +14,9 @@ import (
 )
 
 type User struct {
-	Id   bson.ObjectId `bson:"_id" json:"id"`
-	Name string        `bson:"user" json:"name"`
-	Image string       `json:"image"`
+	Id    bson.ObjectId `bson:"_id" json:"id"`
+	Name  string        `bson:"user" json:"name"`
+	Image string        `json:"image"`
 }
 
 var globalS *mgo.Session
@@ -24,8 +24,8 @@ var globalS *mgo.Session
 const (
 	MGODB      = "test"
 	COLLECTION = "users"
-	EGRESSURL = "http://httpbin.org/anything"
-	IMAGEURL = "https://cdn1.iconfinder.com/data/icons/DarkGlass_Reworked/128x128/apps/user-3.png"
+	EGRESSURL  = "http://httpbin.org/anything"
+	IMAGEURL   = "https://cdn1.iconfinder.com/data/icons/DarkGlass_Reworked/128x128/apps/user-3.png"
 )
 
 func init() {
@@ -58,14 +58,14 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
-	}else if err == mgo.ErrNotFound {
+	} else if err == mgo.ErrNotFound {
 		user.Id = bson.NewObjectId()
 		if err := insertUser(user); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
-	}else {
+	} else {
 		result.Image = getImageUrlFromHttpBin()
 		responseWithJson(w, http.StatusCreated, result)
 		return
