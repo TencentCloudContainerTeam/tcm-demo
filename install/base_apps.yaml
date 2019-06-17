@@ -335,3 +335,92 @@ spec:
   selector:
     app: stock
   type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-v1
+  namespace: base
+  labels:
+    app: users
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: users
+        version: v1
+    spec:
+      containers:
+        - name: users
+          image: ccr.ccs.tencentyun.com/hale/demo-users:latest
+          imagePullPolicy: Always
+          env:
+            - name: MONGO_DB_URL
+              value: mongodb://mongodb:27017/test
+          ports:
+            - containerPort: 5000
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: users
+  namespace: base
+  labels:
+    app: users
+spec:
+  ports:
+    - port: 5000
+      name: http
+  selector:
+    app: users
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-v1
+  namespace: base
+  labels:
+    app: mongodb
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+        version: v1
+    spec:
+      containers:
+        - name: mongodb
+          image: ccr.ccs.tencentyun.com/hale/demo-mongodb:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: base
+  labels:
+    app: mongodb
+spec:
+  ports:
+    - port: 27017
+      name: mongo
+  selector:
+    app: mongodb
