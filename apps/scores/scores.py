@@ -40,25 +40,26 @@ class Server(BaseHTTPRequestHandler):
 
 def get_score(id):
     mock_DB = {
-        1: 9.8,
-        2: 10,
-        3: 9.7,
-        4: 9.5,
-        5: 9.9,
-        6: 10,
-        7: 9.8,
-        8: 9.3,
-        9: 9.4,
-        10: 10,
-        11: 8.9,
-        12: 9.2,
-        13: 9.6,
-        14: 8.2,
+        1: 98,
+        2: 100,
+        3: 97,
+        4: 95,
+        5: 99,
+        6: 90,
+        7: 98,
+        8: 93,
+        9: 94,
+        10: 100,
+        11: 89,
+        12: 92,
+        13: 96,
+        14: 82,
+        15: 94,
     }
 
     if id in mock_DB:
-        #return mock_DB[id] # v1
-        return mock_DB[id] * 10 #v2
+        return mock_DB[id] # v1
+        #return mock_DB[id] * 10 #v2
     return ''
 
 def run(server_class=HTTPServer, handler_class=Server, port=7000):

@@ -6,20 +6,23 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 )
 
 type Product struct {
-	ID    int64   `json:"id"`
-	Title string  `json:"title"`
-	Image string  `json:"image"`
-	Price float64 `json:"price"`
-	Sales int64   `json:"sales"`
-	Stock int64   `json:"stock"`
+	ID        int64   `json:"id"`
+	Title     string  `json:"title"`
+	Image     string  `json:"image"`
+	Price     float64 `json:"price"`
+	Sales     int64   `json:"sales"`
+	Stock     int64   `json:"stock"`
+	Favorites int64   `json:"favorites"`
 }
 
 func main() {
 	http.HandleFunc("/products", productsController)
-	fmt.Println("staring products service on port 5000")
+	fmt.Println("staring products service on port 7000")
 	http.ListenAndServe(":7000", nil)
 }
 
@@ -44,14 +47,15 @@ func productsController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf("querying products of %v\n", ids)
+	headers := getForwardHeaders(r)
 
-	var products []*Product
-	for _, id := range ids {
-		product := getProduct(id)
-		if product != nil {
-			products = append(products, product)
-		}
-	}
+	products := getProduct(ids, headers)
+	// for _, id := range ids {
+	// 	product := getProduct(id, headers)
+	// 	if product != nil {
+	// 		products = append(products, product)
+	// 	}
+	// }
 
 	js, err := json.Marshal(products)
 	if err != nil {
@@ -64,11 +68,105 @@ func productsController(w http.ResponseWriter, r *http.Request) {
 	w.Write(js)
 }
 
-func getProduct(id int64) *Product {
-	if p, ok := mockDB[id]; ok {
-		return &p
+func getProduct(ids []int64, headers map[string]string) []*Product {
+	var products []*Product
+
+	var idsStr []string
+	for _, id := range ids {
+		if p, ok := mockDB[id]; ok {
+			products = append(products, &p)
+			idsStr = append(idsStr, strconv.FormatInt(id, 10))
+		}
 	}
-	return nil
+
+	if len(products) == 0 {
+		return products
+	}
+
+	var waitgroup sync.WaitGroup
+	query := strings.Join(idsStr, ",")
+
+	waitgroup.Add(1)
+	go func() {
+		result := make(map[int64]int64)
+		getJson(fmt.Sprintf("http://sales.base.svc.cluster.local:7000/sales?ids=%s", query), result, headers)
+		for k, v := range result {
+			if products[k] != nil {
+				products[k].Sales = v
+			}
+		}
+		waitgroup.Done()
+	}()
+
+	waitgroup.Add(1)
+	go func() {
+		result := make(map[int64]int64)
+		getJson(fmt.Sprintf("http://stock.base.svc.cluster.local:7000/stock?ids=%s", query), result, headers)
+		for k, v := range result {
+			if products[k] != nil {
+				products[k].Stock = v
+			}
+		}
+		waitgroup.Done()
+	}()
+
+	waitgroup.Add(1)
+	go func() {
+		result := make(map[int64]int64)
+		getJson(fmt.Sprintf("http://favorites.base.svc.cluster.local:7000/favorites?ids=%s", query), result, headers)
+		for k, v := range result {
+			if products[k] != nil {
+				products[k].Favorites = v
+			}
+		}
+		waitgroup.Done()
+	}()
+
+	waitgroup.Wait()
+	return products
+}
+
+func getJson(url string, target interface{}, headers map[string]string) error {
+	var client = &http.Client{Timeout: 10 * time.Second}
+	reqest, err := http.NewRequest("GET", url, nil)
+
+	for k, v := range headers {
+		reqest.Header.Add(k, v)
+	}
+
+	if err != nil {
+		panic(err)
+	}
+	response, err := client.Do(reqest)
+
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	return json.NewDecoder(response.Body).Decode(target)
+}
+
+func getForwardHeaders(r *http.Request) map[string]string {
+	headers := make(map[string]string)
+	forwardHeaders := []string{
+		"user",
+		"x-request-id",
+		"x-b3-traceid",
+		"x-b3-spanid",
+		"x-b3-parentspanid",
+		"x-b3-sampled",
+		"x-b3-flags",
+		"x-ot-span-context",
+	}
+
+	for _, h := range forwardHeaders {
+		if v := r.Header.Get(h); v != "" {
+			headers[h] = v
+		}
+	}
+
+	return headers
 }
 
 var mockDB = map[int64]Product{

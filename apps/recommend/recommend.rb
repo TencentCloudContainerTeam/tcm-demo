@@ -6,12 +6,11 @@ set :port, 7000
 
 get '/recommend' do
   content_type :json
-  user = request.env["HTTP_USER"]
-  puts "getting recommend products for user #{user}"
 
   headers = getForwardHeaders(request.env)
+  puts "getting recommend products for user #{headers["cookie"]}"
 
-  ids = getRecommendIDsByUser(user)
+  ids = getRecommendIDsByUser() # todo pass user
   products = getProducts(ids, headers)
   products.each do |p|
     score = getScores([p["id"]], headers)
@@ -19,13 +18,13 @@ get '/recommend' do
   end
   recommend = {
     products: products,
-    #banner: "v2 banner todo" #v2
+    banner: "v2 banner todo" #v2
   }
 
   recommend.to_json
 end
 
-def getRecommendIDsByUser(user)
+def getRecommendIDsByUser()
   mockDB = (7..15).to_a
   mockDB.sample(4)
 end
@@ -55,7 +54,7 @@ end
 def getForwardHeaders(env)
   headers = {}
   forwardHeaders = [
-    "user",
+    "cookie",
     'x-request-id',
     'x-b3-traceid',
     'x-b3-spanid',

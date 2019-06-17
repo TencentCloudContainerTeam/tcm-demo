@@ -15,7 +15,6 @@ metadata:
   labels:
     app: recommend
     version: v2
-    env: fox
   name: recommend-v2
   namespace: fox
 spec:
@@ -29,6 +28,7 @@ spec:
       labels:
         app: recommend
         version: v2
+        env: fox
     spec:
       containers:
         - image: tcmdemo/recommend:v2
@@ -48,9 +48,9 @@ metadata:
   namespace: fox
 spec:
   ports:
-  - name: http
-    port: 7000
-    protocol: TCP
+    - name: http
+      port: 7000
+      protocol: TCP
   selector:
     app: recommend
   type: ClusterIP
@@ -63,14 +63,25 @@ metadata:
   namespace: fox
 spec:
   hosts:
-  - "recommend.base.svc.cluster.local"
+    - "recommend.base.svc.cluster.local"
   http:
-  - route:
-    - destination:
-        host: recommend.testuser3.svc.cluster.local
-        #subset: v1 # todo
-        port:
-          number: 7000
+    - match:
+        - headers:
+            cookie:
+              exact: "user=fox"
+      route:
+        - destination:
+            host: recommend.fox.svc.cluster.local
+            #subset: v1 # todo
+            port:
+              number: 7000
+    - route: # 不能省略todo
+        - destination:
+            host: recommend.base.svc.cluster.local
+            #subset: v1 # todo
+            port:
+              number: 7000
+
 ---
 
 apiVersion: extensions/v1beta1
@@ -79,7 +90,6 @@ metadata:
   labels:
     app: scores
     version: v2
-    env: fox
   name: scores-v2
   namespace: fox
 spec:
@@ -93,6 +103,7 @@ spec:
       labels:
         app: scores
         version: v2
+        env: fox
     spec:
       containers:
         - image: tcmdemo/scores:v2
@@ -112,9 +123,9 @@ metadata:
   namespace: fox
 spec:
   ports:
-  - name: http
-    port: 7000
-    protocol: TCP
+    - name: http
+      port: 7000
+      protocol: TCP
   selector:
     app: scores
   type: ClusterIP
@@ -127,14 +138,21 @@ metadata:
   namespace: fox
 spec:
   hosts:
-  - "scores.base.svc.cluster.local"
+    - "scores.base.svc.cluster.local"
   http:
-  - route:
-    - destination:
-        host: scores.fox.svc.cluster.local
-        #subset: v1 # todo
-        port:
-          number: 7000
+    - match:
+        - sourceLabels:
+            env: fox
+      route:
+        - destination:
+            host: scores.fox.svc.cluster.local
+            #subset: v1 # todo
+            port:
+              number: 7000
+    - route:
+        - destination:
+            host: scores.base.svc.cluster.local
+            #subset: v1 # todo
+            port:
+              number: 7000
 ---
-
-

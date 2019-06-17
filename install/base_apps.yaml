@@ -241,3 +241,97 @@ spec:
   selector:
     app: mall
   type: ClusterIP
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: sales
+    version: v1
+  name: sales-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sales
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: sales
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/sales:v1
+          imagePullPolicy: Always
+          name: sales
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: sales
+  name: sales
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: sales
+  type: ClusterIP
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: stock
+    version: v1
+  name: stock-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: stock
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/stock:v1
+          imagePullPolicy: Always
+          name: stock
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: stock
+  name: stock
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: stock
+  type: ClusterIP

@@ -1,0 +1,14 @@
+FROM tcmdemo/spring-boot-cache as spring-cache
+
+FROM maven:3.5-jdk-8 as builder
+COPY --from=spring-cache /root/.m2/repository /root/.m2/repository
+COPY ./ /src/app
+WORKDIR /src/app
+RUN mvn package
+RUN ls /src/app/target/
+
+FROM java:8-alpine
+COPY --from=builder /src/app/target/app-0.1.0.jar /app.jar
+ENV server.port 7000
+WORKDIR /
+CMD ["java", "-jar", "app.jar"]
