@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"github.com/gorilla/mux"
-	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -13,14 +15,17 @@ import (
 
 type User struct {
 	Id   bson.ObjectId `bson:"_id" json:"id"`
-	Name string        `bson:"name" json:"name"`
+	Name string        `bson:"user" json:"name"`
+	Image string       `json:"image"`
 }
 
 var globalS *mgo.Session
 
 const (
 	MGODB      = "test"
-	COLLECTION = "user"
+	COLLECTION = "users"
+	EGRESSURL = "http://httpbin.org/anything"
+	IMAGEURL = "https://cdn1.iconfinder.com/data/icons/DarkGlass_Reworked/128x128/apps/user-3.png"
 )
 
 func init() {
@@ -33,11 +38,11 @@ func init() {
 }
 
 func main() {
-	router := mux.NewRouter().StrictSlash(true)
+	router := mux.NewRouter()
 	router.HandleFunc("/users", createUser).Methods("POST")
-	router.HandleFunc("/users", findUser).Methods("GET")
+	router.HandleFunc("/users", findUserByName).Methods("GET")
 	fmt.Println("starting user service on port 5000")
-	http.ListenAndServe(":5000", nil)
+	http.ListenAndServe(":5000", router)
 }
 
 func createUser(w http.ResponseWriter, r *http.Request) {
@@ -48,27 +53,39 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	user.Id = bson.NewObjectId()
-	if err := insertUser(user); err != nil {
+	result, err := findOneByName(user.Name)
+	if err != nil && err != mgo.ErrNotFound {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
+	}else if err == mgo.ErrNotFound {
+		user.Id = bson.NewObjectId()
+		if err := insertUser(user); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			return
+		}
+	}else {
+		result.Image = getImageUrlFromHttpBin()
+		responseWithJson(w, http.StatusCreated, result)
+		return
 	}
 
+	user.Image = getImageUrlFromHttpBin()
 	responseWithJson(w, http.StatusCreated, user)
 }
 
-func findUser(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	var users []User
-	users, err := findAll()
+func findUserByName(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	name := query.Get("name")
+	user, err := findOneByName(name)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
-
-	responseWithJson(w, http.StatusOK, users)
+	user.Image = getImageUrlFromHttpBin()
+	responseWithJson(w, http.StatusOK, user)
 }
 
 func responseWithJson(w http.ResponseWriter, code int, payload interface{}) {
@@ -90,14 +107,52 @@ func insertUser(users ...interface{}) error {
 	return c.Insert(users...)
 }
 
-func findAll() ([]User, error) {
-	var result []User
+func findOneByName(name string) (User, error) {
+	var result User
 	ms, c := connect()
 	defer ms.Close()
-	err := c.Find(nil).Select(nil).All(result)
+	err := c.Find(bson.M{"user": name}).Select(nil).One(&result)
 	if err != nil {
-		return nil, err
+		return result, err
+	}
+	return result, nil
+}
+
+func getImageUrlFromHttpBin() string {
+	image := make(map[string]interface{})
+	image["url"] = IMAGEURL
+	bytesData, err := json.Marshal(image)
+	if err != nil {
+		return ""
+	}
+	httpRequest, err := http.NewRequest("POST", EGRESSURL, bytes.NewReader(bytesData))
+	httpRequest.Header.Set("Content-Type", "application/json")
+
+	httpResponse, err := http.DefaultClient.Do(httpRequest)
+	if err != nil {
+		return ""
+	}
+	defer httpResponse.Body.Close()
+	body, err := ioutil.ReadAll(httpResponse.Body)
+	if err != nil {
+		return ""
 	}
 
-	return result, nil
+	if httpResponse.StatusCode != http.StatusOK {
+		return ""
+	}
+
+	type dataJson struct {
+		ImageUrl string `json:"url"`
+	}
+	type httpBinRsp struct {
+		DataJson dataJson `json:"json"`
+	}
+	resp := &httpBinRsp{}
+	err = json.Unmarshal(body, resp)
+	if err != nil {
+		return ""
+	}
+
+	return resp.DataJson.ImageUrl
 }
