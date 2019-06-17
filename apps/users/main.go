@@ -41,8 +41,8 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/users", createUser).Methods("POST")
 	router.HandleFunc("/users", findUserByName).Methods("GET")
-	fmt.Println("starting user service on port 5000")
-	http.ListenAndServe(":5000", router)
+	fmt.Println("starting user service on port 7000")
+	http.ListenAndServe(":7000", router)
 }
 
 func createUser(w http.ResponseWriter, r *http.Request) {
