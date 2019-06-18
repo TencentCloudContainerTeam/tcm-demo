@@ -42,7 +42,7 @@ func discountController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	discount := Discount{
-		Banner:   "v2 Banner todo", // v2
+		Banner:   "https://github.com/TencentCloudContainerTeam/tcm-demo/blob/master/assets/k8s.png?raw=true",
 		Products: products,
 	}
 

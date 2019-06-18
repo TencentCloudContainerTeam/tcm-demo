@@ -16,20 +16,20 @@ public class StockController {
     @GetMapping("/stock")
     public Map<Integer, Integer> sales(@RequestParam("ids") String ids) {
         Map<Integer, Integer> mockDbMap = Maps.newHashMap();
-        mockDbMap.put(1, 1001);
-        mockDbMap.put(2, 1002);
-        mockDbMap.put(3, 1003);
-        mockDbMap.put(4, 1004);
-        mockDbMap.put(5, 1005);
-        mockDbMap.put(6, 1006);
+        mockDbMap.put(1, 2001);
+        mockDbMap.put(2, 3002);
+        mockDbMap.put(3, 1903);
+        mockDbMap.put(4, 1404);
+        mockDbMap.put(5, 2005);
+        mockDbMap.put(6, 1000);
         mockDbMap.put(7, 1007);
         mockDbMap.put(8, 1008);
         mockDbMap.put(9, 1009);
         mockDbMap.put(10, 1010);
-        mockDbMap.put(11, 1011);
-        mockDbMap.put(12, 1012);
-        mockDbMap.put(13, 1013);
-        mockDbMap.put(14, 1014);
+        mockDbMap.put(11, 1511);
+        mockDbMap.put(12, 1612);
+        mockDbMap.put(13, 1713);
+        mockDbMap.put(14, 1814);
         mockDbMap.put(15, 1015);
 
         Map<Integer, Integer> resultMap = Maps.newHashMap();
