@@ -17,7 +17,7 @@ type Product struct {
 	Price     float64 `json:"price"`
 	Sales     int64   `json:"sales"`
 	Stock     int64   `json:"stock"`
-	Favorites int64   `json:"favorites"`
+	Favorites int64   `json:"favorites,omitempty"`
 }
 
 func main() {
@@ -50,12 +50,6 @@ func productsController(w http.ResponseWriter, r *http.Request) {
 	headers := getForwardHeaders(r)
 
 	products := getProduct(ids, headers)
-	// for _, id := range ids {
-	// 	product := getProduct(id, headers)
-	// 	if product != nil {
-	// 		products = append(products, product)
-	// 	}
-	// }
 
 	js, err := json.Marshal(products)
 	if err != nil {
@@ -89,10 +83,10 @@ func getProduct(ids []int64, headers map[string]string) []*Product {
 	waitgroup.Add(1)
 	go func() {
 		result := make(map[int64]int64)
-		getJson(fmt.Sprintf("http://sales.base.svc.cluster.local:7000/sales?ids=%s", query), result, headers)
-		for k, v := range result {
-			if products[k] != nil {
-				products[k].Sales = v
+		getJson(fmt.Sprintf("http://sales.base.svc.cluster.local:7000/sales?ids=%s", query), &result, headers)
+		for _, p := range products {
+			if v, ok := result[p.ID]; ok {
+				p.Sales = v
 			}
 		}
 		waitgroup.Done()
@@ -101,10 +95,10 @@ func getProduct(ids []int64, headers map[string]string) []*Product {
 	waitgroup.Add(1)
 	go func() {
 		result := make(map[int64]int64)
-		getJson(fmt.Sprintf("http://stock.base.svc.cluster.local:7000/stock?ids=%s", query), result, headers)
-		for k, v := range result {
-			if products[k] != nil {
-				products[k].Stock = v
+		getJson(fmt.Sprintf("http://stock.base.svc.cluster.local:7000/stock?ids=%s", query), &result, headers)
+		for _, p := range products {
+			if v, ok := result[p.ID]; ok {
+				p.Stock = v
 			}
 		}
 		waitgroup.Done()
@@ -113,10 +107,11 @@ func getProduct(ids []int64, headers map[string]string) []*Product {
 	waitgroup.Add(1)
 	go func() {
 		result := make(map[int64]int64)
-		getJson(fmt.Sprintf("http://favorites.base.svc.cluster.local:7000/favorites?ids=%s", query), result, headers)
-		for k, v := range result {
-			if products[k] != nil {
-				products[k].Favorites = v
+		getJson(fmt.Sprintf("http://favorites.base.svc.cluster.local:7000/favorites?ids=%s", query), &result, headers)
+		for _, p := range products {
+			fmt.Println(result[p.ID])
+			if v, ok := result[p.ID]; ok {
+				p.Favorites = v
 			}
 		}
 		waitgroup.Done()

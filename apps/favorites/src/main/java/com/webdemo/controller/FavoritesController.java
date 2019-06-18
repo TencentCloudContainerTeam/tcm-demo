@@ -30,10 +30,11 @@ public class FavoritesController {
         mockDbMap.put(12, 51);
         mockDbMap.put(13, 32);
         mockDbMap.put(14, 49);
-        mockDbMap.put(14, 9);
+        mockDbMap.put(15, 9);
 
         Map<Integer, Integer> resultMap = Maps.newHashMap();
 
+        System.out.println("getting favorites of ids: " + ids);
         for (String id : ids.split(",")) {
             Integer value = mockDbMap.get(Integer.valueOf(id));
             if (value != null) {

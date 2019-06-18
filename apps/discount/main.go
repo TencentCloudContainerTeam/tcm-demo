@@ -14,12 +14,13 @@ type Discount struct {
 }
 
 type Product struct {
-	ID    int64   `json:"id"`
-	Title string  `json:"title"`
-	Image string  `json:"image"`
-	Price float64 `json:"price"`
-	Sales int64   `json:"sales"`
-	Stock int64   `json:"stock"`
+	ID        int64   `json:"id"`
+	Title     string  `json:"title"`
+	Image     string  `json:"image"`
+	Price     float64 `json:"price"`
+	Sales     int64   `json:"sales"`
+	Stock     int64   `json:"stock"`
+	Favorites int64   `json:"favorites,omitempty"`
 }
 
 func main() {
@@ -41,7 +42,7 @@ func discountController(w http.ResponseWriter, r *http.Request) {
 	}
 
 	discount := Discount{
-		// Banner:   "v2 Banner todo", // v2
+		Banner:   "v2 Banner todo", // v2
 		Products: products,
 	}
 

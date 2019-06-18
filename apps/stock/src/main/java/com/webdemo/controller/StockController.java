@@ -30,10 +30,11 @@ public class StockController {
         mockDbMap.put(12, 1012);
         mockDbMap.put(13, 1013);
         mockDbMap.put(14, 1014);
-        mockDbMap.put(14, 1015);
+        mockDbMap.put(15, 1015);
 
         Map<Integer, Integer> resultMap = Maps.newHashMap();
 
+        System.out.println("getting stock of ids: " + ids);
         for (String id : ids.split(",")) {
             Integer value = mockDbMap.get(Integer.valueOf(id));
             if (value != null) {

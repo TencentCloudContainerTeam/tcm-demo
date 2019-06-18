@@ -30,9 +30,10 @@ public class SalesController {
         mockDbMap.put(12, 51);
         mockDbMap.put(13, 302);
         mockDbMap.put(14, 49);
-        mockDbMap.put(14, 91);
+        mockDbMap.put(15, 91);
 
         Map<Integer, Integer> resultMap = Maps.newHashMap();
+        System.out.println("getting sales of ids: " + ids);
 
         for (String id : ids.split(",")) {
             Integer value = mockDbMap.get(Integer.valueOf(id));

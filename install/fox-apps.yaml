@@ -13,27 +13,27 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: recommend
+    app: discount
     version: v2
-  name: recommend-v2
+  name: discount-v2
   namespace: fox
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: recommend
+      app: discount
       version: v2
   template:
     metadata:
       labels:
-        app: recommend
-        version: v2
+        app: discount
         env: fox
+        version: v2
     spec:
       containers:
-        - image: tcmdemo/recommend:v2
+        - image: tcmdemo/discount:v2
           imagePullPolicy: Always
-          name: recommend
+          name: discount
           ports:
             - containerPort: 7000
               protocol: TCP
@@ -43,8 +43,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: recommend
-  name: recommend
+    app: discount
+  name: discount
   namespace: fox
 spec:
   ports:
@@ -52,18 +52,18 @@ spec:
       port: 7000
       protocol: TCP
   selector:
-    app: recommend
+    app: discount
   type: ClusterIP
 ---
 
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: recommend
+  name: discount
   namespace: fox
 spec:
   hosts:
-    - "recommend.base.svc.cluster.local"
+    - "discount.base.svc.cluster.local"
   http:
     - match:
         - headers:
@@ -71,13 +71,13 @@ spec:
               exact: "user=fox"
       route:
         - destination:
-            host: recommend.fox.svc.cluster.local
+            host: discount.fox.svc.cluster.local
             #subset: v1 # todo
             port:
               number: 7000
     - route: # 不能省略todo
         - destination:
-            host: recommend.base.svc.cluster.local
+            host: discount.base.svc.cluster.local
             #subset: v1 # todo
             port:
               number: 7000
@@ -88,27 +88,27 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: scores
+    app: products
     version: v2
-  name: scores-v2
+  name: products-v2
   namespace: fox
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: scores
+      app: products
       version: v2
   template:
     metadata:
       labels:
-        app: scores
-        version: v2
+        app: products
         env: fox
+        version: v2
     spec:
       containers:
-        - image: tcmdemo/scores:v2
+        - image: tcmdemo/products:v2
           imagePullPolicy: Always
-          name: scores
+          name: products
           ports:
             - containerPort: 7000
               protocol: TCP
@@ -118,8 +118,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: scores
-  name: scores
+    app: products
+  name: products
   namespace: fox
 spec:
   ports:
@@ -127,32 +127,116 @@ spec:
       port: 7000
       protocol: TCP
   selector:
-    app: scores
+    app: products
   type: ClusterIP
 ---
 
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: scores
+  name: products
   namespace: fox
 spec:
   hosts:
-    - "scores.base.svc.cluster.local"
+    - "products.base.svc.cluster.local"
   http:
     - match:
         - sourceLabels:
             env: fox
       route:
         - destination:
-            host: scores.fox.svc.cluster.local
+            host: products.fox.svc.cluster.local
             #subset: v1 # todo
             port:
               number: 7000
-    - route:
+    - route: # 不能省略todo
         - destination:
-            host: scores.base.svc.cluster.local
+            host: products.base.svc.cluster.local
             #subset: v1 # todo
+            port:
+              number: 7000
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: favorites
+    version: v1
+  name: favorites-v1
+  namespace: fox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: favorites
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: favorites
+        env: fox
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/favorites:v1
+          imagePullPolicy: Always
+          name: favorites
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: favorites
+  name: favorites
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: favorites
+  type: ClusterIP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: favorites
+  name: favorites
+  namespace: fox
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: favorites
+  type: ClusterIP
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: favorites
+  namespace: fox
+spec:
+  hosts:
+    - favorites.base.svc.cluster.local
+  http:
+    - match:
+        - sourceLabels:
+            env: fox
+      route:
+        - destination:
+            host: favorites.fox.svc.cluster.local
             port:
               number: 7000
 ---
