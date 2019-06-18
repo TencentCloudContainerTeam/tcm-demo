@@ -29,7 +29,7 @@ router.get('/login', async (ctx, next) => {
   ctx.response.body = fs.createReadStream('./static/dist/login.html');
 });
 
-router.get('/api/all', async (ctx, next) => {
+router.get('/api/mall', async (ctx, next) => {
   let headers = getForwardHeaders(ctx.request);
 
   let userName = getCookieKey('user', headers.cookie);
@@ -165,7 +165,7 @@ function getForwardHeaders(request) {
 }
 
 function getCookieKey(key, cookie) {
-  if (cookie.length > 0) {
+  if (cookie && cookie.length > 0) {
     c_start = cookie.indexOf(key + '=');
     if (c_start != -1) {
       c_start = c_start + key.length + 1;
