@@ -21,6 +21,7 @@ type User struct {
 
 var globalS *mgo.Session
 
+
 const (
 	MGODB      = "test"
 	COLLECTION = "users"
