@@ -4,7 +4,15 @@ const request = require('request');
 const requestPromise = util.promisify(request);
 const router = require('koa-router')();
 
-router.get('/', async (ctx, next) => {
+// const userURL = 'http://150.109.18.177:30988/users';
+// const discountURL = 'http://150.109.18.177:31474/discount?ids=1,2,3';
+// const recommendURL = 'http://150.109.18.177:31139/recommend?ids=1,2,3';
+
+const userURL = 'http://users.base.svc.cluster.local:7000/users';
+const discountURL = 'http://discount.base.svc.cluster.local:7000/discount';
+const recommendURL = 'http://recommend.base.svc.cluster.local:7000/recommend';
+
+http: router.get('/', async (ctx, next) => {
   'use strict';
   ctx.redirect('/index');
 });
@@ -21,11 +29,56 @@ router.get('/login', async (ctx, next) => {
   ctx.response.body = fs.createReadStream('./static/dist/login.html');
 });
 
+// 串行
+router.get('/api/all', async (ctx, next) => {
+  let headers = getForwardHeaders(ctx.request);
+
+  let userName = getCookieKey('user', headers.cookie);
+  let userUri = userURL;
+  if (userName) {
+    userUri += '?name=' + userName;
+  }
+  let userOptions = {
+    uri: userUri,
+    method: 'GET',
+    headers: headers,
+    json: true
+  };
+
+  let discountOptions = {
+    uri: discountURL,
+    method: 'GET',
+    headers: headers,
+    json: true
+  };
+
+  let recommendOptions = {
+    uri: recommendURL,
+    method: 'GET',
+    headers: headers,
+    json: true
+  };
+
+  let user = await requestPromise(userOptions);
+  let discount = await requestPromise(discountOptions);
+  let recommend = await requestPromise(recommendOptions);
+
+  ctx.body = {
+    user: user.body,
+    discount: discount.body,
+    recommend: recommend.body
+  };
+});
+
 router.get('/api/users', async (ctx, next) => {
   let headers = getForwardHeaders(ctx.request);
-  let userName = headers.cookie.user || '';
+  let userName = getCookieKey('user', headers.cookie);
+  let userUri = userURL;
+  if (userName) {
+    userUri += '?name=' + userName;
+  }
   let userOptions = {
-    uri: 'http://users.base.svc.cluster.local:7000/users?name=' + userName,
+    uri: userUri,
     method: 'GET',
     headers: headers,
     json: true
@@ -38,15 +91,15 @@ router.get('/api/users', async (ctx, next) => {
 router.post('/api/users', async (ctx, next) => {
   let headers = getForwardHeaders(ctx.request);
 
-  headers = Object.assign({}, { 'content-type': 'application/json' }, headers);
+  headers = Object.assign({}, { 'Content-Type': 'application/json' }, headers);
 
   let userOptions = {
-    uri: 'http://users.base.svc.cluster.local:7000/users',
+    uri: userURL,
     method: 'POST',
-    data: JSON.stringify(ctx.request.body),
-    headers: headers,
-    json: true
+    json: ctx.request.body,
+    headers: headers
   };
+
   let user = await requestPromise(userOptions);
 
   ctx.body = {
@@ -58,7 +111,7 @@ router.post('/api/users', async (ctx, next) => {
 router.get('/api/products', async (ctx, next) => {
   let headers = getForwardHeaders(ctx.request);
   let discountOptions = {
-    uri: 'http://discount.base.svc.cluster.local:7000/discount',
+    uri: discountURL,
     method: 'GET',
     headers: headers,
     json: true
@@ -72,7 +125,7 @@ router.get('/api/recommends', async (ctx, next) => {
   let headers = getForwardHeaders(ctx.request);
 
   let recommendOptions = {
-    uri: 'http://recommend.base.svc.cluster.local:7000/recommend',
+    uri: recommendURL,
     method: 'GET',
     headers: headers,
     json: true
@@ -108,6 +161,21 @@ function getForwardHeaders(request) {
   }
 
   return headers;
+}
+
+function getCookieKey(key, cookie) {
+  if (cookie.length > 0) {
+    c_start = cookie.indexOf(key + '=');
+    if (c_start != -1) {
+      c_start = c_start + key.length + 1;
+      c_end = cookie.indexOf(';', c_start);
+      if (c_end == -1) {
+        c_end = cookie.length;
+      }
+      return unescape(cookie.substring(c_start, c_end));
+    }
+  }
+  return '';
 }
 
 module.exports = router;

@@ -18,24 +18,19 @@
             <ul class="h-inner">
 
                 <li class="hi-logo hidden-xs">
-                    <a href="/index">服务网格 TCM Demo</a>
+                    <a href="index.html">服务网格 TCM Demo</a>
                 </li>
 
                 <li class="pull-right">
                     <ul class="hi-menu">
-                        <li>
+                        <li id="user_name_wrapper">
                           <a href="" class="a-prevent"><span style="line-height: 36px;" id="logined_user_name"></span></a>
                         </li>
-                        <li class="dropdown">
-                            <a data-toggle="dropdown" href=""><i class="him-icon zmdi zmdi-more-vert"></i></a>
-                            <ul class="dropdown-menu pull-right">
-                                <li class="hidden-xs">
-                                    <a data-mesh-action="fresh-page" href="">刷新</a>
-                                </li>
-                                <li class="hidden-xs">
-                                    <a data-mesh-action="logout" href="">注销</a>
-                                </li>
-                            </ul>
+                        <li id="login_wrapper">
+                          <a href="javascript:void(0);" style="line-height: 36px;" data-mesh-action="goto-login">登录</a>
+                        </li>
+                        <li id="logout_wrapper">
+                          <a href="javascript:void(0);" style="line-height: 36px;" data-mesh-action="logout">退出</a>
                         </li>
                     </ul>
                 </li>
