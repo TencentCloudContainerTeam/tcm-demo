@@ -37,6 +37,9 @@ func main() {
 
 func createUser(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
+
+	headers := getForwardHeaders(r)
+
 	var user User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -56,16 +59,17 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		result.Image = getImageUrlFromHttpBin()
+		result.Image = getImageUrlFromHttpBin(headers)
 		responseWithJson(w, http.StatusCreated, result)
 		return
 	}
 
-	user.Image = getImageUrlFromHttpBin()
+	user.Image = getImageUrlFromHttpBin(headers)
 	responseWithJson(w, http.StatusCreated, user)
 }
 
 func findUserByName(w http.ResponseWriter, r *http.Request) {
+	headers := getForwardHeaders(r)
 	query := r.URL.Query()
 	name := query.Get("name")
 	user, err := findOneByName(name)
@@ -80,7 +84,7 @@ func findUserByName(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	user.Image = getImageUrlFromHttpBin()
+	user.Image = getImageUrlFromHttpBin(headers)
 	responseWithJson(w, http.StatusOK, user)
 }
 
@@ -125,7 +129,7 @@ func findOneByName(name string) (User, error) {
 	return result, nil
 }
 
-func getImageUrlFromHttpBin() string {
+func getImageUrlFromHttpBin(headers map[string]string) string {
 	image := make(map[string]interface{})
 	image["url"] = IMAGEURL
 	bytesData, err := json.Marshal(image)
@@ -134,6 +138,9 @@ func getImageUrlFromHttpBin() string {
 	}
 	httpRequest, err := http.NewRequest("POST", EGRESSURL, bytes.NewReader(bytesData))
 	httpRequest.Header.Set("Content-Type", "application/json")
+	for k, v := range headers {
+		httpRequest.Header.Add(k, v)
+	}
 
 	httpResponse, err := http.DefaultClient.Do(httpRequest)
 	if err != nil {
@@ -162,4 +169,26 @@ func getImageUrlFromHttpBin() string {
 	}
 
 	return resp.DataJson.ImageUrl
+}
+
+func getForwardHeaders(r *http.Request) map[string]string {
+	headers := make(map[string]string)
+	forwardHeaders := []string{
+		"user",
+		"x-request-id",
+		"x-b3-traceid",
+		"x-b3-spanid",
+		"x-b3-parentspanid",
+		"x-b3-sampled",
+		"x-b3-flags",
+		"x-ot-span-context",
+	}
+
+	for _, h := range forwardHeaders {
+		if v := r.Header.Get(h); v != "" {
+			headers[h] = v
+		}
+	}
+
+	return headers
 }
