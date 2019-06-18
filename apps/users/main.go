@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 type User struct {
@@ -19,24 +20,12 @@ type User struct {
 	Image string        `json:"image"`
 }
 
-var globalS *mgo.Session
-
-
 const (
 	MGODB      = "test"
 	COLLECTION = "users"
 	EGRESSURL  = "http://httpbin.org/anything"
 	IMAGEURL   = "https://cdn1.iconfinder.com/data/icons/DarkGlass_Reworked/128x128/apps/user-3.png"
 )
-
-func init() {
-	var url = os.Getenv("MONGO_DB_URL")
-	s, err := mgo.Dial(url)
-	if err != nil {
-		log.Fatalf("Create Session: %s\n", err)
-	}
-	globalS = s
-}
 
 func main() {
 	router := mux.NewRouter()
@@ -96,23 +85,34 @@ func responseWithJson(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
-func connect() (*mgo.Session, *mgo.Collection) {
-	s := globalS.Copy()
+func connect() (*mgo.Session, *mgo.Collection, error) {
+	var url = os.Getenv("MONGO_DB_URL")
+	s, err := mgo.DialWithTimeout(url, 1*time.Second)
+	if err != nil {
+		log.Printf("Create Session: %s\n", err)
+		return nil, nil, err
+	}
 	c := s.DB(MGODB).C(COLLECTION)
-	return s, c
+	return s, c, nil
 }
 
 func insertUser(users ...interface{}) error {
-	ms, c := connect()
+	ms, c, err := connect()
+	if err != nil {
+		return err
+	}
 	defer ms.Close()
 	return c.Insert(users...)
 }
 
 func findOneByName(name string) (User, error) {
 	var result User
-	ms, c := connect()
+	ms, c, err := connect()
+	if err != nil {
+		return result, err
+	}
 	defer ms.Close()
-	err := c.Find(bson.M{"user": name}).Select(nil).One(&result)
+	err = c.Find(bson.M{"user": name}).Select(nil).One(&result)
 	if err != nil {
 		return result, err
 	}
