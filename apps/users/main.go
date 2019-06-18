@@ -70,9 +70,15 @@ func findUserByName(w http.ResponseWriter, r *http.Request) {
 	name := query.Get("name")
 	user, err := findOneByName(name)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
+		if err == mgo.ErrNotFound {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(err.Error()))
+			return
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			return
+		}
 	}
 	user.Image = getImageUrlFromHttpBin()
 	responseWithJson(w, http.StatusOK, user)
