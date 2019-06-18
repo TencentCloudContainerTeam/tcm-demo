@@ -13,5 +13,5 @@ app.use(static(path.join(__dirname, staticPath)));
 
 app.use(require('./router/index').routes());
 
-app.listen(8080);
-console.log('start success, port: 8080');
+app.listen(7000);
+console.log('start success, port: 7000');

@@ -3,12 +3,11 @@ FROM node:10.16.0-alpine
 WORKDIR /app
 
 COPY package.json ./
-COPY package-lock.json ./
+#COPY package-lock.json ./
 RUN npm install
 
 COPY app.js ./
-COPY static ./
-COPY router ./
+COPY static ./static
+COPY router ./router
 
-# EXPOSE 8080
 CMD [ "npm", "start" ]
