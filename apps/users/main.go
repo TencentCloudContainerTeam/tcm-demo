@@ -38,7 +38,7 @@ func main() {
 func createUser(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	headers := getForwardHeaders(r)
+	//headers := getForwardHeaders(r)
 
 	var user User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
@@ -59,17 +59,17 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		result.Image = getImageUrlFromHttpBin(headers)
+		//result.Image = getImageUrlFromHttpBin(headers)
 		responseWithJson(w, http.StatusCreated, result)
 		return
 	}
 
-	user.Image = getImageUrlFromHttpBin(headers)
+	//user.Image = getImageUrlFromHttpBin(headers)
 	responseWithJson(w, http.StatusCreated, user)
 }
 
 func findUserByName(w http.ResponseWriter, r *http.Request) {
-	headers := getForwardHeaders(r)
+	//headers := getForwardHeaders(r)
 	query := r.URL.Query()
 	name := query.Get("name")
 	user, err := findOneByName(name)
@@ -84,7 +84,7 @@ func findUserByName(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	user.Image = getImageUrlFromHttpBin(headers)
+	//user.Image = getImageUrlFromHttpBin(headers)
 	responseWithJson(w, http.StatusOK, user)
 }
 
