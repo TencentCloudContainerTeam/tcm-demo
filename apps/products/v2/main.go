@@ -191,7 +191,7 @@ var mockDB = map[int64]Product{
 	},
 	5: {
 		ID:    5,
-		Title: "",
+		Title: "Fluentd Decal",
 		Image: "https://cdn.shopify.com/s/files/1/1300/8977/products/fluentd_decal_Artboard_1_large.png?v=1528318244",
 		Price: 0.5,
 	},
