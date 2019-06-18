@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9"><![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>服务网格 TCM Demo -- 登录</title>
+
+        <!-- Vendor CSS -->
+        <link href="vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+
+        <!-- CSS -->
+        <link href="css/app_1.min.css" rel="stylesheet">
+    </head>
+
+    <body data-p-id="login">
+        <div class="login-content">
+            <!-- Login -->
+            <div class="lc-block toggled" id="l-login">
+                <div class="lcb-form">
+                    <div class="form-group">
+                        <div class="fg-line">
+                            <input type="text" class="form-control" placeholder="用户名" id="login_user">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="fg-line">
+                            <input type="password" class="form-control" placeholder="密码" id="login_pass">
+                        </div>
+                    </div>
+
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" value="" id="login_remember">
+                            <i class="input-helper"></i>
+                            记住登录
+                        </label>
+                    </div>
+
+                    <a href="javascript:void(0);" data-mesh-action="login" class="btn btn-login btn-success"><i class="zmdi zmdi-arrow-forward"></i></a>
+                </div>
+
+                <div class="lcb-navigation">
+                    <a href="" data-mesh-action="login-switch" data-ma-block="#l-register"><i class="zmdi zmdi-plus"></i> <span>注册账号</span></a>
+                </div>
+            </div>
+
+            <!-- Register -->
+            <div class="lc-block" id="l-register">
+                <div class="lcb-form">
+                    <div class="form-group">
+                        <div class="fg-line">
+                            <input type="text" class="form-control" placeholder="用户名">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="fg-line">
+                            <input type="text" class="form-control" placeholder="邮箱">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="fg-line">
+                            <input type="password" class="form-control" placeholder="密码">
+                        </div>
+                    </div>
+
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" value="">
+                            <i class="input-helper"></i>
+                            确认信息无误
+                        </label>
+                    </div>
+
+                    <a href="" class="btn btn-login btn-success"><i class="zmdi zmdi-check"></i></a>
+                </div>
+
+                <div class="lcb-navigation">
+                    <a href="" data-mesh-action="login-switch" data-ma-block="#l-login"><i class="zmdi zmdi-long-arrow-right"></i> <span>直接登录</span></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Javascript Libraries -->
+        <script src="vendors/bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="js/app.min.js"></script>
+    </body>
+</html>
