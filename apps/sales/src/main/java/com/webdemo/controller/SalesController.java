@@ -18,7 +18,7 @@ public class SalesController {
         Map<Integer, Integer> mockDbMap = Maps.newHashMap();
         mockDbMap.put(1, 502);
         mockDbMap.put(2, 408);
-        mockDbMap.put(3, 1003);
+        mockDbMap.put(3, 993);
         mockDbMap.put(4, 981);
         mockDbMap.put(5, 270);
         mockDbMap.put(6, 345);
