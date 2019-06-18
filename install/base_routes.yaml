@@ -25,16 +25,16 @@ spec:
   gateways:
     - mall-gateway
   http:
-    - match:
-        - uri:
-            exact: /mall
+    # - match:
+    #     - uri:
+    #         exact: /mall
         # - uri:
         #     exact: /login
         # - uri:
         #     exact: /logout
         # - uri:
         #     prefix: /api/v1/products
-      route:
+     - route:
         - destination:
             host: mall
             #subset: v1 # todo
