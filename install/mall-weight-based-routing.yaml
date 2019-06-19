@@ -1,0 +1,66 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: mall
+    version: v2
+  name: mall-v2
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mall
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: mall
+        version: v2
+    spec:
+      containers:
+        - image: tcmdemo/mall:v2
+          imagePullPolicy: Always
+          name: mall
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: mall
+  namespace: base
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - mall-gateway
+  http:
+    - route:
+        - destination:
+            host: mall
+            subset: v1
+          weight: 50
+        - destination:
+            host: mall
+            subset: v2
+          weight: 50
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: mall
+  namespace: base
+spec:
+  host: mall
+  subsets:
+    - name: v1
+      labels:
+        version: v1
+    - name: v2
+      labels:
+        version: v2
+---

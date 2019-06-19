@@ -360,7 +360,7 @@ spec:
     spec:
       containers:
         - name: users
-          image: ccr.ccs.tencentyun.com/hale/demo-users:latest
+          image: tcmdemo/users:v1
           imagePullPolicy: Always
           env:
             - name: MONGO_DB_URL
