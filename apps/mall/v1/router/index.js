@@ -45,13 +45,6 @@ router.get('/api/mall', async (ctx, next) => {
     json: true
   };
 
-  let discountOptions = {
-    uri: discountURL,
-    method: 'GET',
-    headers: headers,
-    json: true
-  };
-
   let recommendOptions = {
     uri: recommendURL,
     method: 'GET',
@@ -59,9 +52,16 @@ router.get('/api/mall', async (ctx, next) => {
     json: true
   };
 
+  let discountOptions = {
+    uri: discountURL,
+    method: 'GET',
+    headers: headers,
+    json: true
+  };
+
   let user = await requestPromise(userOptions);
-  let discount = await requestPromise(discountOptions);
   let recommend = await requestPromise(recommendOptions);
+  let discount = await requestPromise(discountOptions);
 
   ctx.body = {
     user: user.body,
