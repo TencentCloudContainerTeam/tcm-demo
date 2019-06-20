@@ -37,6 +37,7 @@ router.get('/api/mall', async (ctx, next) => {
   if (userName) {
     userUri += '?name=' + userName;
   }
+  console.log("getting mall data")
   let userOptions = {
     uri: userUri,
     method: 'GET',
