@@ -18,7 +18,7 @@ get '/recommend' do
   end
   recommend = {
     products: products,
-    banner: "https://github.com/TencentCloudContainerTeam/tcm-demo/blob/master/assets/istio.png?raw=true"
+    banner: "https://github.com/TencentCloudContainerTeam/tcm-demo/blob/master/assets/recommend-banner.png?raw=true"
   }
 
   recommend.to_json
@@ -26,7 +26,7 @@ end
 
 def getRecommendIDsByUser()
   mockDB = (7..15).to_a
-  mockDB.sample(4)
+  mockDB.sample(6)
 end
 
 def getProducts(ids, headers)
