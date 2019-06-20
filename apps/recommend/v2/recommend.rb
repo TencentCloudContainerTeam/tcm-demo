@@ -26,7 +26,7 @@ end
 
 def getRecommendIDsByUser()
   mockDB = (7..15).to_a
-  mockDB.sample(4)
+  mockDB.sample(6)
 end
 
 def getProducts(ids, headers)
