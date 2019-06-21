@@ -8,7 +8,7 @@ spec:
     istio: ingressgateway
   servers:
     - port:
-        number: 8080
+        number: 80
         name: http
         protocol: HTTP
       hosts:
@@ -40,6 +40,7 @@ spec:
             subset: v1
             port:
               number: 7000
+
 ---
 
 apiVersion: networking.istio.io/v1alpha3
@@ -53,3 +54,4 @@ spec:
     - name: v1
       labels:
         version: v1
+---

@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: mall
+    version: v2
+  name: mall-v2
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mall
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: mall
+        version: v2
+    spec:
+      containers:
+        - image: tcmdemo/mall:v2
+          imagePullPolicy: Always
+          name: mall
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+

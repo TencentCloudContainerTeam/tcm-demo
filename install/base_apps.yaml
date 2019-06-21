@@ -406,7 +406,7 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: ccr.ccs.tencentyun.com/hale/demo-mongodb:latest
+          image: tcmdemo/mongodb:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 27017

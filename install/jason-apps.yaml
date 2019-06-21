@@ -54,30 +54,3 @@ spec:
   selector:
     app: recommend
   type: ClusterIP
----
-
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: recommend
-  namespace: jason
-spec:
-  hosts:
-    - "recommend.base.svc.cluster.local"
-  http:
-    - match:
-        - headers:
-            cookie:
-              exact: "user=jason"
-      route:
-        - destination:
-            host: recommend.jason.svc.cluster.local
-            #subset: v1 # todo
-            port:
-              number: 7000
-    - route: # 不能省略todo
-        - destination:
-            host: recommend.base.svc.cluster.local
-            #subset: v1 # todo
-            port:
-              number: 7000

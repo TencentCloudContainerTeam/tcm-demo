@@ -56,34 +56,6 @@ spec:
   type: ClusterIP
 ---
 
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: discount
-  namespace: fox
-spec:
-  hosts:
-    - "discount.base.svc.cluster.local"
-  http:
-    - match:
-        - headers:
-            cookie:
-              exact: "user=fox"
-      route:
-        - destination:
-            host: discount.fox.svc.cluster.local
-            #subset: v1 # todo
-            port:
-              number: 7000
-    - route: # 不能省略todo
-        - destination:
-            host: discount.base.svc.cluster.local
-            #subset: v1 # todo
-            port:
-              number: 7000
-
----
-
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -129,33 +101,6 @@ spec:
   selector:
     app: products
   type: ClusterIP
----
-
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: products
-  namespace: fox
-spec:
-  hosts:
-    - "products.base.svc.cluster.local"
-  http:
-    - match:
-        - sourceLabels:
-            env: fox
-      route:
-        - destination:
-            host: products.fox.svc.cluster.local
-            #subset: v1 # todo
-            port:
-              number: 7000
-    - route: # 不能省略todo
-        - destination:
-            host: products.base.svc.cluster.local
-            #subset: v1 # todo
-            port:
-              number: 7000
-
 ---
 
 apiVersion: extensions/v1beta1
@@ -220,23 +165,3 @@ spec:
   selector:
     app: favorites
   type: ClusterIP
----
-
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: favorites
-  namespace: fox
-spec:
-  hosts:
-    - favorites.base.svc.cluster.local
-  http:
-    - match:
-        - sourceLabels:
-            env: fox
-      route:
-        - destination:
-            host: favorites.fox.svc.cluster.local
-            port:
-              number: 7000
----
