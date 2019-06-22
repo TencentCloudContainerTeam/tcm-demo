@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/discount:v2
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: discount
           ports:
             - containerPort: 7000
@@ -79,7 +79,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/products:v2
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: products
           ports:
             - containerPort: 7000
@@ -126,7 +126,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/favorites:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: favorites
           ports:
             - containerPort: 7000

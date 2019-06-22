@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/scores:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: scores
           ports:
             - containerPort: 7000
@@ -78,7 +78,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/recommend:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: recommend
           ports:
             - containerPort: 7000
@@ -125,7 +125,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/products:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: products
           ports:
             - containerPort: 7000
@@ -172,7 +172,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/discount:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: discount
           ports:
             - containerPort: 7000
@@ -219,7 +219,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/mall:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: mall
           ports:
             - containerPort: 7000
@@ -266,7 +266,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/sales:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: sales
           ports:
             - containerPort: 7000
@@ -313,7 +313,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/stock:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: stock
           ports:
             - containerPort: 7000
@@ -361,7 +361,7 @@ spec:
       containers:
         - name: users
           image: tcmdemo/users:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           env:
             - name: MONGO_DB_URL
               value: mongodb://mongodb:27017/test
@@ -407,7 +407,7 @@ spec:
       containers:
         - name: mongodb
           image: tcmdemo/mongodb:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 27017
 ---

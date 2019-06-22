@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/recommend:v2
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: recommend
           ports:
             - containerPort: 7000

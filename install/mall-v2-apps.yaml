@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - image: tcmdemo/mall:v2
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: mall
           ports:
             - containerPort: 7000
