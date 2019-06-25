@@ -18,7 +18,7 @@ get '/recommend' do
   end
   recommend = {
     products: products,
-    banner: "https://github.com/TencentCloudContainerTeam/tcm-demo/blob/master/assets/recommend-banner.png?raw=true"
+    banner: "https://cdn.jsdelivr.net/gh/TencentCloudContainerTeam/tcm-demo/assets/recommend-banner.png"
   }
 
   recommend.to_json
