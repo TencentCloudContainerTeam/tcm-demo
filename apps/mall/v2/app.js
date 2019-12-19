@@ -12,6 +12,12 @@ app.use(bodyParser());
 app.use(static(path.join(__dirname, staticPath)));
 
 app.use(require('./router/index').routes());
+const ip = process.env.INSTANCE_IP
 
-app.listen(7000);
-console.log('start success, port: 7000');
+if (ip) {
+  app.listen(7000, ip);
+  console.log('start success, port: 7000, ip ', ip);
+} else {
+  app.listen(7000);
+  console.log('start success, port: 7000');
+}
