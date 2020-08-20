@@ -1,0 +1,426 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: base
+  labels:
+    istio-injection: enabled
+spec:
+  finalizers:
+    - kubernetes
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: scores
+    version: v1
+  name: scores-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scores
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: scores
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/scores:v1
+          imagePullPolicy: IfNotPresent
+          name: scores
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: scores
+  name: scores
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: scores
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: recommend
+    version: v2
+  name: recommend-v2
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recommend
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: recommend
+        version: v2
+    spec:
+      containers:
+        - image: tcmdemo/recommend:v2
+          imagePullPolicy: IfNotPresent
+          name: recommend
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: recommend
+  name: recommend
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: recommend
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: products
+    version: v1
+  name: products-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: products
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: products
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/products:v1
+          imagePullPolicy: IfNotPresent
+          name: products
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: products
+  name: products
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: products
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: discount
+    version: v1
+  name: discount-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discount
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: discount
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/discount:v1
+          imagePullPolicy: IfNotPresent
+          name: discount
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: discount
+  name: discount
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: discount
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mall
+    version: v1
+  name: mall-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mall
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: mall
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/mall:v1
+          imagePullPolicy: IfNotPresent
+          name: mall
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mall
+  name: mall
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: mall
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sales
+    version: v1
+  name: sales-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sales
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: sales
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/sales:v1
+          imagePullPolicy: IfNotPresent
+          name: sales
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: sales
+  name: sales
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: sales
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: stock
+    version: v1
+  name: stock-v1
+  namespace: base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stock
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: stock
+        version: v1
+    spec:
+      containers:
+        - image: tcmdemo/stock:v1
+          imagePullPolicy: IfNotPresent
+          name: stock
+          ports:
+            - containerPort: 7000
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: stock
+  name: stock
+  namespace: base
+spec:
+  ports:
+    - name: http
+      port: 7000
+      protocol: TCP
+  selector:
+    app: stock
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-v1
+  namespace: base
+  labels:
+    app: users
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: users
+        version: v1
+    spec:
+      containers:
+        - name: users
+          image: tcmdemo/users:v1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MONGO_DB_URL
+              value: mongodb://mongodb:27017/test
+          ports:
+            - containerPort: 7000
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: users
+  namespace: base
+  labels:
+    app: users
+spec:
+  ports:
+    - port: 7000
+      name: http
+  selector:
+    app: users
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-v1
+  namespace: base
+  labels:
+    app: mongodb
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+        version: v1
+    spec:
+      containers:
+        - name: mongodb
+          image: tcmdemo/mongodb:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: base
+  labels:
+    app: mongodb
+spec:
+  ports:
+    - port: 27017
+      name: mongo
+  selector:
+    app: mongodb
