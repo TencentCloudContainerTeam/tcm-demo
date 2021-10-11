@@ -1,3 +1,7 @@
+注意：
+* 如果使用 TCM 1.10.3：请使用 tag tcm-1.10.3
+* 如果使用开源 istio：请使用 master 分支
+
 ##  在线商城系统
 
 <img src="http://ww4.sinaimg.cn/large/006tNc79gy1g4dtmtlwdwj30o50vcwjy.jpg" referrerpolicy="no-referrer"/>
